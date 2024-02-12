@@ -1,11 +1,17 @@
+package service;
+
+import exception.EmployeeAlreadyAddedException;
+import exception.EmployeeNotFoundException;
+import exception.EmployeeStorageIsFullException;
+import model.Employee;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 @Service
 public class EmployeeService {
-    private static final int employeeCount = 5;
-    private final Map<String, Employee> employees = new HashMap<>();
+    protected static final int employeeCount = 5;
+    protected final Map<String, Employee> employees = new HashMap<>();
 
     public Employee createEmployee(String firstName, String lastName) {
         if (employees.size() >= employeeCount) {
@@ -59,7 +65,7 @@ public class EmployeeService {
         return employees.values();
     }
 
-    private String getKey(String firstName, String lastName) {
+    protected String getKey(String firstName, String lastName) {
         return firstName + lastName;
     }
 }
