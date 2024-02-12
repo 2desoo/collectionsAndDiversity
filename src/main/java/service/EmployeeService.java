@@ -5,25 +5,27 @@ import exception.EmployeeNotFoundException;
 import exception.EmployeeStorageIsFullException;
 import model.Employee;
 import org.springframework.stereotype.Service;
+import util.StringUtils;
 
 import java.util.*;
 
 @Service
 public class EmployeeService {
-    protected static final int employeeCount = 5;
-    protected final Map<String, Employee> employees = new HashMap<>();
+    private static final int employeeCount = 5;
+    private final Map<String, Employee> employees = new HashMap<>();
+
+    private static void checkUserData(String firstName, String lastName) {
+        if (StringUtils.isNullOrEmpty(firstName) || StringUtils.isNullOrEmpty(lastName)) {
+            throw new IllegalArgumentException();
+        }
+    }
 
     public Employee createEmployee(String firstName, String lastName) {
+        EmployeeService.checkUserData(firstName, lastName);
         if (employees.size() >= employeeCount) {
             throw new EmployeeStorageIsFullException();
         }
         String key = getKey(firstName, lastName);
-        if (firstName == null || firstName.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-        if (lastName == null || lastName.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
         if (employees.containsKey(key)) {
             throw new EmployeeAlreadyAddedException();
         }
@@ -33,12 +35,7 @@ public class EmployeeService {
     }
 
     public Employee removeEmployee(String firstName, String lastName) {
-        if (firstName == null || firstName.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-        if (lastName == null || lastName.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
+        EmployeeService.checkUserData(firstName, lastName);
         Employee employee = employees.remove(getKey(firstName, lastName));
         if (employee == null) {
             throw new EmployeeNotFoundException();
@@ -47,12 +44,7 @@ public class EmployeeService {
     }
 
     public Employee findEmployee(String firstName, String lastName) {
-        if (firstName == null || firstName.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-        if (lastName == null || lastName.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
+        EmployeeService.checkUserData(firstName, lastName);
         String key = getKey(firstName, lastName);
         Employee employee = employees.get(key);
         if (employee == null) {
@@ -65,7 +57,7 @@ public class EmployeeService {
         return employees.values();
     }
 
-    protected String getKey(String firstName, String lastName) {
+    private String getKey(String firstName, String lastName) {
         return firstName + lastName;
     }
 }
